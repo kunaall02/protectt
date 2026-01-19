@@ -145,7 +145,15 @@ def main():
     dp.add_handler(CommandHandler("status", status_command))
 
     updater.start_polling(drop_pending_updates=True)
-    updater.idle()   # THIS LINE KEEPS CONTAINER ALIVE
+
+    import threading
+    threading.Thread(
+        target=run_check,
+        kwargs={"verbose": False},
+        daemon=True
+    ).start()
+
+    updater.idle()   # ❗❗ YEH LINE SABSE IMPORTANT HAI
 
 
 if __name__ == "__main__":
