@@ -6,6 +6,8 @@ import time
 import re
 import signal
 import sys
+import os
+os.environ["TZ"] = "UTC"
 import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
