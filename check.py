@@ -142,9 +142,10 @@ def main():
     dp.add_handler(CommandHandler("start", start_command))
     dp.add_handler(CommandHandler("status", status_command))
 
-    updater.start_polling()
+    updater.start_polling(drop_pending_updates=True)
 
-    run_check(verbose=False)
+    import threading
+    threading.Thread(target=run_check, kwargs={"verbose": False}, daemon=True).start()
 
     updater.idle()
 
