@@ -1,9 +1,17 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import json
 import requests
 import time
 import re
 import signal
 import sys
+import io
+
+# Ensure UTF-8 output on Windows
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
 
 VOUCHER_VALUES = {
     "SVH": 4000,
@@ -20,11 +28,17 @@ def load_cookies():
     with open("cookies.json", "r", encoding="utf-8") as f:
         raw = f.read().strip()
     try:
-        cookie_dict = json.loads(raw)
-        return "; ".join(f"{k}={v}" for k, v in cookie_dict.items())
+        cookie_list = json.loads(raw)
+        # Convert list of cookie objects to cookie string
+        if isinstance(cookie_list, list):
+            return "; ".join(f"{c['name']}={c['value']}" for c in cookie_list)
+        else:
+            # If it's already a dict, handle it
+            cookie_dict = cookie_list
+            return "; ".join(f"{k}={v}" for k, v in cookie_dict.items())
     except:
-        pass
-    return raw
+        # If JSON parsing fails, assume it's already a cookie string
+        return raw
 
 def get_headers(cookie_string):
     return {
@@ -208,3 +222,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
